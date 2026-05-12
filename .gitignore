@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+scrcpy_profiles.json
+rekaman.mp4
+rekaman.mkv
