@@ -14,3 +14,4 @@ node_modules/
 scrcpy-launcher-v5/node_modules/
 scrcpy-launcher-v5/dist/
 scrcpy-launcher-v5/src-tauri/target/
+scrcpy-launcher-v5/.RustEnv/
