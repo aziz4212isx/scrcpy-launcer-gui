@@ -1,111 +1,114 @@
-# 🚀 Scrcpy Pro Launcher v4.0
+# 🚀 Scrcpy Pro Launcher v5.0 (Tauri Edition)
 
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Tauri Version](https://img.shields.io/badge/tauri-2.0-blue.svg)](https://tauri.app/)
+[![React Version](https://img.shields.io/badge/react-19.0-purple.svg)](https://react.dev/)
 [![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)](https://github.com/Genymobile/scrcpy)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-**Scrcpy Pro Launcher** adalah aplikasi GUI desktop modern dan kaya fitur yang dirancang untuk mengontrol perangkat Android dari PC Windows menggunakan engine **scrcpy**. Dibuat menggunakan pustaka *CustomTkinter*, launcher ini mempermudah konfigurasi, koneksi wireless (nirkabel), rekaman layar, hingga fitur multi-tasking layar virtual tanpa perlu mengetik perintah konsol secara manual.
+**Scrcpy Pro Launcher v5.0** adalah aplikasi GUI desktop generasi terbaru yang ringan, cepat, dan modern untuk mengontrol perangkat Android dari PC Windows. Dibangun menggunakan **Tauri (Rust)**, **React**, dan **TypeScript**, aplikasi ini berfungsi sebagai pembungkus (*wrapper*) visual yang elegan untuk engine **scrcpy**.
 
 ---
 
-## 📂 Penjelasan Berkas Batch (`.bat`) & Pembantu
+## 📂 Struktur Berkas Pembantu
 
-Sebelum memulai, berikut adalah kegunaan dari berkas-berkas `.bat` dan `.vbs` yang ada di folder root:
+Berikut adalah berkas pendukung bawaan engine scrcpy dan kegunaannya yang berada di folder root:
 
 | Berkas | Kegunaan | Status |
 | :--- | :--- | :--- |
-| **`Scrcpy-Modern-Launcher.bat`** | **Sangat Penting.** Script peluncur otomatis yang mendeteksi Python, memeriksa & menginstal dependensi (`customtkinter`, `sounddevice`, `pyinstaller`), mendeteksi jika ada perubahan pada kode sumber `scrcpy_launcher.py` untuk otomatis membangun kembali berkas `.exe`, lalu menjalankannya. | **Aktif/Digunakan** |
-| **`open_a_terminal_here.bat`** | Shortcut instan untuk membuka jendela Command Prompt (`cmd.exe`) langsung di direktori kerja ini. Sangat berguna untuk kebutuhan debugging cepat. | **Aktif/Pendukung** |
-| **`scrcpy-console.bat`** | Script bawaan resmi `scrcpy` untuk menjalankan streaming scrcpy manual via konsol dan menahan jendela terminal jika terjadi error. | **Aktif/Bawaan Scrcpy** |
-| **`scrcpy-noconsole.vbs`** | Script VBScript bawaan resmi `scrcpy` untuk meluncurkan `scrcpy.exe` secara background tanpa menampilkan jendela hitam konsol di layar PC. | **Aktif/Bawaan Scrcpy** |
+| **`Scrcpy-Launcher-v5.exe`** | **Executable Utama.** Aplikasi GUI launcher versi 5.0 siap pakai yang langsung meluncurkan antarmuka visual. | **Aktif/Digunakan** |
+| **`scrcpy-launcher-v5/`** | **Folder Sumber Kode.** Folder proyek pengembangan berbasis Tauri + React + TypeScript. | **Aktif/Sumber Kode** |
+| **`open_a_terminal_here.bat`** | Utilitas cepat untuk membuka jendela Command Prompt (`cmd.exe`) langsung di direktori kerja ini. | **Aktif/Pendukung** |
+| **`scrcpy-console.bat`** | Script bawaan resmi `scrcpy` untuk menjalankan streaming manual via terminal. | **Aktif/Bawaan Scrcpy** |
+| **`scrcpy-noconsole.vbs`** | Script bawaan resmi `scrcpy` untuk meluncurkan `scrcpy.exe` di latar belakang secara tersembunyi. | **Aktif/Bawaan Scrcpy** |
 
 ---
 
 ## 🛠️ Persyaratan Sistem & Instalasi
 
-Ikuti langkah-langkah di bawah ini untuk mempersiapkan dan menjalankan launcher di komputer Anda.
-
 ### Langkah 1: Persiapan pada Perangkat Android
 1. Buka **Pengaturan** di HP Android Anda.
 2. Masuk ke **Tentang Ponsel** (*About Phone*), lalu ketuk **Nomor Bentukan** (*Build Number*) sebanyak 7 kali hingga muncul pesan bahwa *Developer Options* (Pilihan Pengembang) telah aktif.
-3. Kembali ke Pengaturan utama, buka **Pilihan Pengembang**, lalu aktifkan **Debugging USB** (*USB Debugging*).
+3. Buka **Pilihan Pengembang**, lalu aktifkan **Debugging USB** (*USB Debugging*).
 4. *(Opsional untuk WiFi)* Hubungkan HP Anda ke jaringan WiFi yang sama dengan PC Anda.
 
-### Langkah 2: Instalasi Python di Windows (Jika belum terpasang)
-Jika komputer Anda belum memiliki Python, instal terlebih dahulu:
-1. Unduh penginstal Python resmi (versi 3.8 ke atas direkomendasikan) dari [python.org](https://www.python.org/downloads/).
-2. **PENTING:** Selama proses instalasi, pastikan Anda mencentang opsi **"Add Python to PATH"** sebelum menekan tombol *Install Now*.
-
-### Langkah 3: Menjalankan Aplikasi & Instalasi Otomatis
-Anda tidak perlu menginstal dependensi Python secara manual. Cukup klik dua kali pada:
-▶️ **`Scrcpy-Modern-Launcher.bat`**
-
-Script ini akan secara otomatis melakukan:
-1. Verifikasi instalasi Python pada PATH komputer Anda.
-2. Memeriksa dan menginstal pustaka yang diperlukan (`customtkinter`, `sounddevice`, `pyinstaller`) secara otomatis melalui `pip`.
-3. Membangun/mengompilasi kode program menjadi berkas executable `Scrcpy-Modern-Launcher.exe` secara lokal jika terdapat perubahan kode.
-4. Menjalankan launcher utama.
+### Langkah 2: Cara Menjalankan GUI Launcher
+Aplikasi ini bersifat *portable* dan siap pakai. Anda tidak perlu memasang Node.js atau Rust untuk menjalankannya:
+1. Pastikan seluruh berkas scrcpy (`scrcpy.exe`, `adb.exe`, dll.) berada di folder root yang sama.
+2. Klik dua kali pada berkas:
+   ▶️ **`Scrcpy-Launcher-v5.exe`**
 
 ---
 
-## 🚀 Panduan & Fitur Penggunaan
+## 💻 Panduan Pengembangan (Development)
 
-> [!TIP]
-> Semua konfigurasi yang Anda pilih pada GUI akan diperbarui secara langsung pada kolom **Pratinjau Perintah** (*Command Preview*) di bagian bawah. Anda bisa menyalinnya dengan tombol **Salin** (*Copy*) jika ingin menjalankannya di PC lain secara manual.
+Jika Anda ingin memodifikasi atau membangun ulang launcher dari kode sumber:
+
+### Prasyarat
+1. Pasang **Node.js** (versi 18 ke atas) dari [nodejs.org](https://nodejs.org/).
+2. Pasang compiler **Rust** melalui toolchain [rustup.rs](https://rustup.rs/).
+
+### Langkah Pengembangan
+1. Masuk ke folder proyek launcher:
+   ```bash
+   cd scrcpy-launcher-v5
+   ```
+2. Pasang dependensi Node.js:
+   ```bash
+   npm install
+   ```
+3. Jalankan aplikasi dalam mode pengembangan (*live reload*):
+   ```bash
+   npm run tauri dev
+   ```
+4. Bangun/kompilasi aplikasi menjadi executable `.exe` mandiri baru:
+   ```bash
+   npm run tauri build
+   ```
+   *Hasil kompilasi `.exe` baru akan berada di folder `scrcpy-launcher-v5/src-tauri/target/release/`.*
+
+---
+
+## 🚀 Fitur Utama & Cara Penggunaan
 
 ```mermaid
 graph TD
-    A[Mulai Launcher] --> B{Pilih Koneksi}
+    A[Buka Scrcpy-Launcher-v5.exe] --> B{Pilih Koneksi}
     B -->|Kabel USB| C[Colok HP ke PC & Klik Refresh 🔄]
-    B -->|WiFi ADB Manual| D[Isi IP:Port HP & Klik Sambung 🔗]
+    B -->|WiFi ADB Manual| D[Masukkan IP:Port HP & Sambung 🔗]
     B -->|Scan Jaringan| E[Klik Scan 🔍 & Pilih HP dari Daftar]
-    C --> F[Konfigurasi Kualitas, Layar, & Audio]
+    C --> F[Sesuaikan Preset Kualitas, Audio, & Layar]
     D --> F
     E --> F
-    F --> G[Klik Jalankan Scrcpy 🚀]
+    F --> G[Klik JALANKAN SCRCPY 🚀]
 ```
 
-### 1. Metode Koneksi Perangkat
-* **Kabel USB (Rekomendasi):** Colokkan HP ke PC dengan kabel data yang berkualitas. Klik tombol **Refresh (🔄)** pada launcher. Nama perangkat Anda akan muncul pada daftar dropdown.
-* **WiFi ADB (USB ke WiFi):** Hubungkan HP via USB terlebih dahulu. Klik tombol **🌐 Aktifkan** pada bagian *WiFi ADB*. IP perangkat Anda akan terisi otomatis pada kolom IP:Port, setelah itu Anda dapat melepas kabel USB.
-* **Koneksi Manual IP:** Masukkan alamat IP dan port perangkat Android Anda (misal: `192.168.1.15:5555`) secara manual pada kolom yang tersedia, kemudian klik **🔗 Sambung**.
-* **Scan Jaringan Lokal (🔍 Scan):** Klik tombol **🔍 Scan** untuk memindai port adb (5555) di seluruh subnet lokal Anda. Pilih perangkat yang ditemukan dari daftar dialog popup untuk langsung menghubungkannya.
-* **WiFi ADB HP Toggle (🟢 WiFi ADB: ON/OFF):** Tombol pintas untuk mengaktifkan atau mematikan fitur nirkabel langsung di pengaturan sistem HP Android Anda secara instan dari PC.
+### 1. Koneksi Perangkat
+* **Kabel USB:** Colokkan HP ke PC dengan kabel data. Klik tombol **Refresh (🔄)** pada launcher untuk mendeteksi perangkat.
+* **WiFi ADB (USB ke WiFi):** Hubungkan HP via USB terlebih dahulu. Klik tombol **Aktifkan WiFi ADB** pada GUI untuk mengisi alamat IP secara otomatis, setelah itu kabel USB dapat dilepas.
+* **Scan Subnet (🔍 Scan):** Klik **Scan** untuk mendeteksi perangkat Android lain di jaringan WiFi lokal Anda yang port ADB-nya (5555) terbuka, lalu pilih dari daftar popup.
 
-### 2. Kualitas & Resolusi Layar
-* **Preset Cepat:** Pilih kualitas instan mulai dari **Rendah**, **Sedang**, **Tinggi**, hingga **2K** sesuai kemampuan spesifikasi PC dan kestabilan jaringan WiFi Anda.
-* **Codec Video:** Mendukung pilihan codec modern **h264**, **h265**, dan **av1** (direkomendasikan memakai h265 atau av1 untuk performa nirkabel terbaik dengan bitrate rendah).
+### 2. Kualitas Stream & Codec
+* Gunakan pilihan preset kualitas cepat mulai dari **Rendah**, **Sedang**, **Tinggi**, hingga **2K** demi kelancaran streaming.
+* Gunakan codec modern seperti **h265** atau **av1** jika HP dan PC Anda mendukung untuk menghemat data bandwidth saat koneksi via WiFi.
 
-### 3. Sinkronisasi Audio & Perilaku Layar
-* **Speaker Keluaran:** Mengarahkan suara streaming HP ke output audio PC tertentu (memerlukan pustaka `sounddevice`).
-* **Perilaku:** Centang opsi seperti **Matikan Layar HP** (menghemat baterai HP saat dikontrol dari PC), **HP Tetap Menyala**, **Selalu di Atas**, atau **Hanya Lihat** (mode read-only tanpa interaksi mouse/keyboard).
+### 3. Multi-Tasking (Layar Virtual Android 13+)
+* Buat layar virtual terpisah agar HP Anda dapat membuka aplikasi lain secara background sementara PC menampilkan aplikasi target (misal: Instagram/Game). Cukup centang **Aktifkan Layar Virtual** dan isi package name aplikasi yang ingin dijalankan.
 
-### 4. Multi-Tasking (Layar Virtual Android 13+)
-Fitur premium untuk membuat layar virtual kedua secara terpisah dari layar fisik HP Anda:
-1. Centang **Aktifkan Layar Virtual**.
-2. Masukkan nama aplikasi pada kolom *Buka Aplikasi* (misal: `instagram` untuk pencarian fuzzy, atau package name penuh seperti `com.instagram.android`).
-3. Tekan **🚀 JALANKAN SCRCPY**. Aplikasi tersebut akan terbuka di jendela PC baru secara independen, sementara layar fisik HP Anda bebas digunakan untuk aktivitas lainnya.
-
-### 5. Rekam Layar
-* Centang opsi **Aktifkan Rekaman** dan tentukan format nama berkas tujuan (mendukung format `.mp4` atau `.mkv`). Rekaman video layar akan disimpan langsung di direktori yang sama setelah sesi scrcpy ditutup.
-
-### 6. Profil Pengaturan
-* Anda dapat menyimpan racikan konfigurasi favorit Anda. Masukkan nama profil pada kolom input, lalu klik **💾 Simpan**.
-* Muat kembali profil kapan saja dengan memilihnya di dropdown dan mengeklik **📂 Muat**.
+### 4. Rekaman Layar & Profil
+* Rekam aktivitas layar langsung ke format `.mp4` atau `.mkv` yang disimpan di direktori root.
+* Simpan kombinasi konfigurasi favorit Anda ke dalam **Profil Pengaturan** agar dapat dimuat kembali secara instan di sesi berikutnya.
 
 ---
 
-## ⚠️ Pemecahan Masalah (Troubleshooting)
+## ⚠️ Troubleshooting
 
 > [!WARNING]
-> **Muncul pesan "adb.exe tidak ditemukan di folder scrcpy!"**
-> Pastikan berkas launcher `scrcpy_launcher.py` (atau versi `.exe`-nya) diletakkan di dalam folder yang sama dengan berkas bawaan paket scrcpy lainnya (seperti `adb.exe`, `scrcpy.exe`, dan file dll pendukung).
+> **Error "adb.exe tidak ditemukan"**
+> Pastikan executable `Scrcpy-Launcher-v5.exe` diletakkan di satu tingkat direktori yang sama dengan berkas engine scrcpy seperti `adb.exe`, `scrcpy.exe`, `scrcpy-server`, dan berbagai berkas `.dll`.
 
 > [!IMPORTANT]
-> **Koneksi WiFi ADB gagal atau terputus**
-> 1. Pastikan HP dan PC berada pada router/Hotspot WiFi yang sama.
-> 2. Pastikan Anda telah menyetujui izin dialog otorisasi kunci komputer (fingerprint dialog) pada layar HP Android saat pertama kali terhubung.
-> 3. Apabila port 5555 tertutup, ulangi proses aktivasi menggunakan koneksi kabel USB terlebih dahulu dengan mengeklik tombol **🌐 Aktifkan** pada launcher.
+> **Otorisasi Kunci Kriptografi (Fingerprint)**
+> Saat pertama kali menghubungkan perangkat ke komputer baru, pastikan untuk membuka layar HP Android Anda dan mengetuk **"Izinkan Debugging USB"** pada pesan dialog popup yang muncul.
 
 ---
 
