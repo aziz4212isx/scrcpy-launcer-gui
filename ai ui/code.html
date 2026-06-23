@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>SCRCPY PRO - Obsidian Noir v5.0</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-variant": "#353437",
+                "tertiary-fixed-dim": "#c7c5d0",
+                "surface-tint": "#c6c6c7",
+                "inverse-surface": "#e5e1e4",
+                "surface-container": "#201f22",
+                "on-error": "#690005",
+                "tertiary-container": "#e3e1ec",
+                "primary": "#ffffff",
+                "secondary-fixed": "#e2e1eb",
+                "surface": "#131315",
+                "on-tertiary-fixed": "#1a1b23",
+                "error": "#ffb4ab",
+                "on-secondary-container": "#b4b4bd",
+                "on-secondary": "#2f3037",
+                "surface-container-highest": "#353437",
+                "on-primary-fixed-variant": "#454747",
+                "on-tertiary": "#2f3038",
+                "error-container": "#93000a",
+                "on-tertiary-container": "#64636d",
+                "on-primary-container": "#636565",
+                "primary-fixed": "#e2e2e2",
+                "surface-bright": "#39393b",
+                "on-secondary-fixed": "#1a1b22",
+                "inverse-on-surface": "#313032",
+                "surface-container-high": "#2a2a2c",
+                "tertiary": "#ffffff",
+                "primary-fixed-dim": "#c6c6c7",
+                "surface-dim": "#131315",
+                "outline-variant": "#444748",
+                "tertiary-fixed": "#e3e1ec",
+                "primary-container": "#e2e2e2",
+                "surface-container-lowest": "#0e0e10",
+                "secondary-fixed-dim": "#c6c6cf",
+                "on-tertiary-fixed-variant": "#46464f",
+                "surface-container-low": "#1c1b1d",
+                "inverse-primary": "#5d5f5f",
+                "on-error-container": "#ffdad6",
+                "background": "#131315",
+                "on-primary-fixed": "#1a1c1c",
+                "secondary": "#c6c6cf",
+                "on-secondary-fixed-variant": "#45464e",
+                "on-primary": "#2f3131",
+                "outline": "#8e9192",
+                "on-surface": "#e5e1e4",
+                "on-surface-variant": "#c4c7c8",
+                "on-background": "#e5e1e4",
+                "secondary-container": "#45464e"
+              },
+              borderRadius: {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+              },
+              fontFamily: {
+                "label-sm": ["JetBrains Mono"],
+                "label-md": ["JetBrains Mono"],
+                "display-lg": ["Geist"],
+                "body-sm": ["Inter"],
+                "headline-lg": ["Geist"],
+                "body-md": ["Inter"],
+                "headline-lg-mobile": ["Geist"],
+                "code": ["JetBrains Mono", "monospace"]
+              }
+            }
+          }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #131315;
+            color: #e5e1e4;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .obsidian-noir-glass {
+            backdrop-filter: blur(16px);
+            background: rgba(28, 27, 29, 0.7);
+            border: 1px solid #444748;
+        }
+
+        .terminal-scroll::-webkit-scrollbar { width: 4px; }
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: #444748;
+            border-radius: 2px;
+        }
+
+        @keyframes pulse-white {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        .pulse-white { animation: pulse-white 2s infinite ease-in-out; }
+
+        select, input, textarea {
+            background: #0e0e10 !important;
+            border-color: #444748 !important;
+            color: #e5e1e4 !important;
+        }
+        select:focus, input:focus, textarea:focus {
+            border-color: #ffffff !important;
+            box-shadow: 0 0 0 1px #ffffff !important;
+            outline: none !important;
+        }
+
+        .active-preset {
+            border-color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- App Wrapper -->
+<div class="h-screen flex flex-col" id="app">
+    <!-- TopAppBar -->
+    <header class="h-14 flex items-center justify-between px-6 border-b border-outline-variant bg-surface/80 backdrop-blur-md z-50">
+        <div class="flex items-center gap-6">
+            <span class="text-xl font-bold tracking-tighter text-primary font-display-lg">SCRCPY PRO</span>
+            <!-- Mode Toggle -->
+            <div class="flex bg-surface-container-lowest p-1 rounded border border-outline-variant">
+                <button class="px-4 py-1 text-[10px] font-bold rounded transition-all bg-primary text-on-primary" id="toggle-simple">SIMPLE</button>
+                <button class="px-4 py-1 text-[10px] font-bold rounded transition-all text-on-surface-variant hover:text-on-surface" id="toggle-pro">PRO</button>
+            </div>
+            <!-- Operation Status -->
+            <div class="hidden md:flex items-center gap-2 text-[11px] font-medium border-l border-outline-variant/30 pl-4" id="header-status">
+                <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" id="status-dot"></span>
+                <span class="font-code text-emerald-400" id="status-text">Siap.</span>
+            </div>
+            <!-- HUD Stats -->
+            <div class="hidden lg:flex items-center gap-3">
+                <div class="flex items-center gap-2 px-3 py-1 bg-surface-container-lowest rounded border border-outline-variant">
+                    <span class="w-1.5 h-1.5 bg-white rounded-full pulse-white"></span>
+                    <span class="text-[11px] font-code text-on-surface-variant">FPS: <span class="text-primary">60</span></span>
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1 bg-surface-container-lowest rounded border border-outline-variant">
+                    <span class="text-[11px] font-code text-on-surface-variant">CPU: <span class="text-on-surface">12%</span></span>
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1 bg-surface-container-lowest rounded border border-outline-variant">
+                    <span class="text-[11px] font-code text-on-surface-variant">TEMP: <span class="text-on-surface">38°C</span></span>
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1 bg-surface-container-lowest rounded border border-outline-variant">
+                    <span class="material-symbols-outlined text-[14px] text-on-surface-variant" data-icon="battery_full">battery_full</span>
+                    <span class="text-[11px] font-code text-on-surface-variant">92%</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer" data-icon="settings">settings</span>
+            <span class="material-symbols-outlined text-error hover:scale-110 cursor-pointer" data-icon="power_settings_new">power_settings_new</span>
+            <div class="w-8 h-8 rounded overflow-hidden border border-outline-variant">
+                <img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpcAa_yQ9wNFzhx_tuuCKQQKSOLkohSnaY1fE5LXt1bVV8x4kC91xcJNe81hiIKYCKk2NGu1muPIdSC0t8HQ5GGfl6FICyKsJgRzC9s6uDJ1EbYvheO-TnxjFO3frJ9-HyOfwTgtUwM2xyVCfzyU15qL9_vwrDZgvlapY6JbFtvTaz-eX4yd2EJPp5Gc-iPPDVYQN2XOeMeqm5Y1AzonwqspBM62Epp4Mf5xZW1C7MC0sp4bxO2B4N6mVCZiiSjgYo2JcoNh8HJ760"/>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex overflow-hidden">
+        <!-- SideNavBar (Only for PRO Mode) -->
+        <aside class="w-60 border-r border-outline-variant bg-surface-container-low hidden flex-col p-4" id="pro-sidebar">
+            <div class="mb-6 flex items-center gap-3 px-2">
+                <span class="material-symbols-outlined text-primary" data-icon="terminal">terminal</span>
+                <span class="font-bold text-sm font-headline-lg-mobile tracking-tight">Dashboard Pro</span>
+            </div>
+            <nav class="flex-1 space-y-1">
+                <button class="nav-item active flex w-full items-center gap-3 px-3 py-2 rounded text-primary bg-surface-variant font-bold text-sm" data-tab="perangkat">
+                    <span class="material-symbols-outlined text-[20px]" data-icon="smartphone">smartphone</span> Perangkat
+                </button>
+                <button class="nav-item flex w-full items-center gap-3 px-3 py-2 rounded text-on-surface-variant hover:bg-white/5 transition-colors text-sm" data-tab="video">
+                    <span class="material-symbols-outlined text-[20px]" data-icon="videocam">videocam</span> Video
+                </button>
+                <button class="nav-item flex w-full items-center gap-3 px-3 py-2 rounded text-on-surface-variant hover:bg-white/5 transition-colors text-sm" data-tab="audio">
+                    <span class="material-symbols-outlined text-[20px]" data-icon="volume_up">volume_up</span> Audio
+                </button>
+                <button class="nav-item flex w-full items-center gap-3 px-3 py-2 rounded text-on-surface-variant hover:bg-white/5 transition-colors text-sm" data-tab="kontrol">
+                    <span class="material-symbols-outlined text-[20px]" data-icon="keyboard">keyboard</span> Kontrol
+                </button>
+                <button class="nav-item flex w-full items-center gap-3 px-3 py-2 rounded text-on-surface-variant hover:bg-white/5 transition-colors text-sm" data-tab="multitask">
+                    <span class="material-symbols-outlined text-[20px]" data-icon="grid_view">grid_view</span> Multi-Task
+                </button>
+                <button class="nav-item flex w-full items-center gap-3 px-3 py-2 rounded text-on-surface-variant hover:bg-white/5 transition-colors text-sm" data-tab="rekaman">
+                    <span class="material-symbols-outlined text-[20px]" data-icon="radio_button_checked">radio_button_checked</span> Rekaman
+                </button>
+                <button class="nav-item flex w-full items-center gap-3 px-3 py-2 rounded text-on-surface-variant hover:bg-white/5 transition-colors text-sm" data-tab="profil">
+                    <span class="material-symbols-outlined text-[20px]" data-icon="account_circle">account_circle</span> Profil
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Workspace -->
+        <main class="flex-1 overflow-y-auto p-8 bg-background relative">
+            <!-- SIMPLE MODE CONTENT -->
+            <div class="max-w-4xl mx-auto space-y-10 pb-32" id="simple-content">
+                <div class="space-y-1">
+                    <h1 class="text-3xl font-bold text-on-surface font-headline-lg">Panduan Cepat</h1>
+                    <p class="text-on-surface-variant font-body-md">Hubungkan perangkat Anda dalam 4 langkah mudah.</p>
+                </div>
+                <!-- Step 1: Device -->
+                <section class="space-y-4">
+                    <div class="flex items-center gap-3 text-primary font-bold">
+                        <span class="w-6 h-6 rounded bg-primary text-on-primary flex items-center justify-center text-xs">1</span>
+                        <span class="font-label-md">Pilih Perangkat</span>
+                    </div>
+                    <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                        <div class="flex gap-4">
+                            <select id="simple-device-select" class="flex-1 rounded px-4 py-3 text-sm focus:outline-none">
+                                <option>Samsung Galaxy S23 Ultra (USB)</option>
+                                <option>Pixel 7 Pro (Wireless)</option>
+                                <option>Tidak ada perangkat</option>
+                            </select>
+                            <button id="btn-simple-refresh" class="px-6 py-3 bg-surface-container-high border border-outline-variant rounded hover:bg-surface-variant transition-all flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]" data-icon="refresh">refresh</span> Scan
+                            </button>
+                            <div class="flex gap-2 flex-1 max-w-[320px]">
+                                <input id="simple-wifi-ip" class="w-full rounded px-4 py-3 text-sm focus:outline-none font-code" placeholder="192.168.x.x:5555" type="text"/>
+                                <button id="btn-simple-connect" class="px-4 py-3 bg-primary text-on-primary rounded text-xs font-bold hover:brightness-90 transition-all whitespace-nowrap">🔗 SAMBUNG</button>
+                            </div>
+                        </div>
+                        <!-- Hint Opsi Pengembang (shown when no devices or as troubleshooting tip) -->
+                        <div id="simple-debugging-hint" class="hidden flex items-start gap-2 text-[11px] text-on-surface-variant bg-surface-container-low p-3 rounded border border-outline-variant/30">
+                            <span class="material-symbols-outlined text-white text-[16px] mt-0.5" data-icon="info">info</span>
+                            <span>Jika HP tidak terdeteksi, pastikan USB Debugging aktif: <strong>Pengaturan → Tentang HP → Ketuk Nomor Bentukan (Build Number) 7x → Opsi Pengembang → USB Debugging</strong>.</span>
+                        </div>
+                    </div>
+                </section>
+                <!-- Step 2: Quality -->
+                <section class="space-y-4">
+                    <div class="flex items-center gap-3 text-primary font-bold">
+                        <span class="w-6 h-6 rounded bg-primary text-on-primary flex items-center justify-center text-xs">2</span>
+                        <span class="font-label-md">Preset Kualitas</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-4">
+                        <button class="obsidian-noir-glass p-4 rounded-lg active-preset text-center group transition-all">
+                            <div class="text-[10px] font-bold text-on-surface-variant group-hover:text-primary transition-colors font-label-sm">RENDAH</div>
+                            <div class="text-xl font-bold font-display-lg">800p</div>
+                            <div class="text-[10px] text-on-surface-variant mt-1 font-label-sm">30 FPS / 2 Mbps</div>
+                        </button>
+                        <button class="obsidian-noir-glass p-4 rounded-lg hover:border-on-surface-variant transition-all text-center group">
+                            <div class="text-[10px] font-bold text-on-surface-variant group-hover:text-primary transition-colors font-label-sm">SEDANG</div>
+                            <div class="text-xl font-bold font-display-lg">1280p</div>
+                            <div class="text-[10px] text-on-surface-variant mt-1 font-label-sm">60 FPS / 8 Mbps</div>
+                        </button>
+                        <button class="obsidian-noir-glass p-4 rounded-lg hover:border-on-surface-variant transition-all text-center group">
+                            <div class="text-[10px] font-bold text-on-surface-variant group-hover:text-primary transition-colors font-label-sm">TINGGI</div>
+                            <div class="text-xl font-bold font-display-lg">1920p</div>
+                            <div class="text-[10px] text-on-surface-variant mt-1 font-label-sm">120 FPS / 24 Mbps</div>
+                        </button>
+                        <button class="obsidian-noir-glass p-4 rounded-lg hover:border-on-surface-variant transition-all text-center group">
+                            <div class="text-[10px] font-bold text-on-surface-variant group-hover:text-primary transition-colors font-label-sm">ULTRA</div>
+                            <div class="text-xl font-bold font-display-lg">2K</div>
+                            <div class="text-[10px] text-on-surface-variant mt-1 font-label-sm">120 FPS / 32 Mbps</div>
+                        </button>
+                    </div>
+                </section>
+                <!-- Step 3: Features -->
+                <section class="space-y-4">
+                    <div class="flex items-center gap-3 text-primary font-bold">
+                        <span class="w-6 h-6 rounded bg-primary text-on-primary flex items-center justify-center text-xs">3</span>
+                        <span class="font-label-md">Fitur Utama</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="obsidian-noir-glass p-4 rounded-lg flex items-center justify-between cursor-pointer group hover:bg-white/5 transition-all">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" data-icon="light_mode">light_mode</span>
+                                <span class="text-sm font-medium">Layar Tetap Menyala</span>
+                            </div>
+                            <input checked="" class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                        </label>
+                        <label class="obsidian-noir-glass p-4 rounded-lg flex items-center justify-between cursor-pointer group hover:bg-white/5 transition-all">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" data-icon="phonelink_erase">phonelink_erase</span>
+                                <span class="text-sm font-medium">Matikan Layar HP</span>
+                            </div>
+                            <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                        </label>
+                        <label class="obsidian-noir-glass p-4 rounded-lg flex items-center justify-between cursor-pointer group hover:bg-white/5 transition-all">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" data-icon="fullscreen">fullscreen</span>
+                                <span class="text-sm font-medium">Mulai Fullscreen</span>
+                            </div>
+                            <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                        </label>
+                        <label class="obsidian-noir-glass p-4 rounded-lg flex items-center justify-between cursor-pointer group hover:bg-white/5 transition-all">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" data-icon="volume_off">volume_off</span>
+                                <span class="text-sm font-medium">Tanpa Audio</span>
+                            </div>
+                            <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                        </label>
+                    </div>
+                </section>
+                <!-- Step 4: Virtual -->
+                <section class="space-y-4 pb-12">
+                    <div class="flex items-center gap-3 text-primary font-bold">
+                        <span class="w-6 h-6 rounded bg-primary text-on-primary flex items-center justify-center text-xs">4</span>
+                        <span class="font-label-md">Layar Virtual (Opsional)</span>
+                    </div>
+                    <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-sm">Aktifkan Display Virtual</h3>
+                                <p class="text-[10px] text-on-surface-variant font-label-sm">Menjalankan aplikasi di jendela terpisah tanpa mengganggu HP.</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input id="toggle-simple-virtual" class="sr-only peer" type="checkbox"/>
+                                <div class="w-11 h-6 bg-surface-container-highest border border-outline-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface-variant after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white"></div>
+                            </label>
+                        </div>
+                        <!-- Start App Input Area (shown when checked) -->
+                        <div id="simple-virtual-options" class="hidden mt-4 pt-4 border-t border-outline-variant/30 space-y-3">
+                            <div class="flex gap-2">
+                                <input id="simple-start-app" class="flex-1 rounded px-4 py-2 text-sm" placeholder="Ketik nama paket aplikasi (contoh: com.whatsapp)" type="text" list="apps-list-simple"/>
+                                <button id="btn-simple-fetch-apps" class="px-4 py-2 bg-surface-container border border-outline-variant rounded text-[11px] font-bold hover:bg-surface-variant transition-all flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]" data-icon="list_alt">list_alt</span> DAFTAR APP
+                                </button>
+                            </div>
+                            <datalist id="apps-list-simple">
+                                <option value="com.android.chrome"></option>
+                                <option value="com.whatsapp"></option>
+                                <option value="com.instagram.android"></option>
+                                <option value="com.spotify.music"></option>
+                            </datalist>
+                            <div id="simple-app-warning" class="text-[10px] text-amber-400 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]" data-icon="warning">warning</span>
+                                <span>Wajib memilih atau mengetik nama paket aplikasi untuk menjalankan Layar Virtual.</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PRO MODE CONTENT -->
+            <div class="hidden space-y-8 pb-32" id="pro-content">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <h1 class="text-3xl font-bold font-headline-lg">Konfigurasi Lanjutan</h1>
+                        <p class="text-on-surface-variant font-body-md">Manajemen detail performa dan kontrol sistem.</p>
+                    </div>
+                    <div>
+                        <button class="px-4 py-2 bg-surface-container border border-outline-variant rounded text-on-surface text-xs font-bold hover:bg-surface-variant transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]" data-icon="save">save</span> SIMPAN PROFIL
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB CONTAINER FOR JS TABS -->
+                <div id="tab-panels">
+                    
+                    <!-- TAB: PERANGKAT -->
+                    <div id="tab-perangkat" class="tab-panel grid grid-cols-12 gap-6">
+                        <div class="col-span-12 lg:col-span-5 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="router">router</span>
+                                    <h3 class="font-bold text-sm font-label-md">Koneksi Utama</h3>
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Device Selector</label>
+                                    <select id="pro-device-select" class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                        <option>Samsung SM-S918B</option>
+                                        <option>Tidak ada perangkat</option>
+                                    </select>
+                                    <div class="flex gap-2">
+                                        <input id="pro-wifi-ip" class="flex-1 rounded px-4 py-2 text-sm font-code" placeholder="192.168.1.104:5555" type="text"/>
+                                        <button id="btn-pro-connect" class="bg-primary text-on-primary px-4 py-2 rounded text-[11px] font-bold whitespace-nowrap">SAMBUNG</button>
+                                    </div>
+                                    <div class="flex gap-2 mt-4">
+                                        <button id="btn-pro-refresh" class="flex-1 py-2 bg-surface-container border border-outline-variant rounded text-[11px] font-bold hover:bg-surface-variant transition-all">REFRESH (🔄)</button>
+                                        <button id="btn-pro-fetch-apps" class="flex-1 py-2 bg-surface-container border border-outline-variant rounded text-[11px] font-bold hover:bg-surface-variant transition-all">DAFTAR APP (📋)</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Wireless Debugging Option -->
+                            <div class="obsidian-noir-glass p-6 rounded-lg bg-white/5 border-primary/20 space-y-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="settings_remote">settings_remote</span>
+                                    <h3 class="font-bold text-sm font-label-md">Wireless Debugging</h3>
+                                </div>
+                                <div class="flex items-center justify-between text-[11px]">
+                                    <span class="text-on-surface-variant font-medium">Status: <span id="wifi-debug-status" class="px-2 py-0.5 rounded bg-amber-950 text-amber-400 font-bold border border-amber-800 ml-1">UNKNOWN</span></span>
+                                    <button id="btn-pro-toggle-debug" class="px-3 py-1.5 bg-surface-container border border-outline-variant rounded hover:bg-surface-variant text-[10px] font-bold">TOGGLE MODE</button>
+                                </div>
+                            </div>
+                            <div class="obsidian-noir-glass p-6 rounded-lg bg-white/5 border-primary/20">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <span class="material-symbols-outlined text-primary" data-icon="wifi">wifi</span>
+                                    <h3 class="font-bold text-sm font-label-md">Wifi ADB Converter</h3>
+                                </div>
+                                <p class="text-[11px] text-on-surface-variant mb-4 leading-relaxed font-body-sm">Konversikan koneksi USB Anda menjadi Wireless secara otomatis hanya dengan satu klik.</p>
+                                <button id="btn-pro-enable-wifi" class="w-full py-3 bg-primary text-on-primary rounded text-xs font-bold hover:brightness-90 transition-all uppercase tracking-wider">
+                                    🌐 Aktifkan Wifi ADB
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Network Scanner -->
+                        <div class="col-span-12 lg:col-span-7 obsidian-noir-glass rounded-lg overflow-hidden flex flex-col min-h-[300px]">
+                            <div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-on-surface text-[20px]" data-icon="search">search</span>
+                                    <span class="font-bold text-sm font-label-md">Network Scanner</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-[10px] text-primary animate-pulse font-code uppercase">Scanning Subnet...</span>
+                                    <button id="btn-pro-scan-wifi" class="px-3 py-1.5 bg-primary text-on-primary text-[10px] font-bold rounded flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[14px]" data-icon="wifi_find">wifi_find</span> SCAN WIFI
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <table class="w-full text-[12px] text-left">
+                                    <thead class="bg-surface-container-lowest text-on-surface-variant font-bold border-b border-outline-variant">
+                                        <tr>
+                                            <th class="px-6 py-3 font-label-sm">IDENTITY</th>
+                                            <th class="px-6 py-3 font-label-sm">ADDRESS</th>
+                                            <th class="px-6 py-3 font-label-sm">STATUS</th>
+                                            <th class="px-6 py-3 font-label-sm">ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-outline-variant/30">
+                                        <tr class="hover:bg-white/5 transition-colors">
+                                            <td class="px-6 py-4 flex items-center gap-2 font-body-sm"><span class="material-symbols-outlined text-on-surface-variant text-[16px]" data-icon="smartphone">smartphone</span> Pixel 6a</td>
+                                            <td class="px-6 py-4 font-code">192.168.1.102</td>
+                                            <td class="px-6 py-4"><span class="px-2 py-0.5 rounded bg-surface-variant text-on-surface text-[10px] font-bold border border-outline-variant">OPEN</span></td>
+                                            <td class="px-6 py-4"><button class="text-on-surface hover:underline font-bold font-label-sm">PAIR</button></td>
+                                        </tr>
+                                        <tr class="hover:bg-white/5 transition-colors">
+                                            <td class="px-6 py-4 flex items-center gap-2 font-body-sm"><span class="material-symbols-outlined text-on-surface-variant text-[16px]" data-icon="tablet">tablet</span> Galaxy Tab S8</td>
+                                            <td class="px-6 py-4 font-code">192.168.1.105</td>
+                                            <td class="px-6 py-4"><span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant text-[10px] font-bold border border-outline-variant">CLOSED</span></td>
+                                            <td class="px-6 py-4"><button class="text-on-surface-variant hover:text-on-surface font-bold font-label-sm">PING</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: VIDEO -->
+                    <div id="tab-video" class="tab-panel hidden grid grid-cols-12 gap-6">
+                        <div class="col-span-12 lg:col-span-5 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="aspect_ratio">aspect_ratio</span>
+                                    <h3 class="font-bold text-sm font-label-md">Resolusi & Bitrate</h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Preset Cepat</label>
+                                        <div class="grid grid-cols-4 gap-1 bg-surface-container-lowest p-0.5 rounded border border-outline-variant">
+                                            <button class="py-1 text-[10px] font-bold rounded bg-surface-variant text-primary">2K</button>
+                                            <button class="py-1 text-[10px] font-bold rounded text-on-surface-variant hover:text-on-surface">HD</button>
+                                            <button class="py-1 text-[10px] font-bold rounded text-on-surface-variant hover:text-on-surface">MED</button>
+                                            <button class="py-1 text-[10px] font-bold rounded text-on-surface-variant hover:text-on-surface font-fill">LOW</button>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Resolusi Maks</label>
+                                        <select id="pro-video-res" class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option value="Bawaan">Bawaan (Default)</option>
+                                            <option value="2560">2560</option>
+                                            <option value="1920">1920</option>
+                                            <option value="1280">1280</option>
+                                            <option value="1024">1024</option>
+                                            <option value="800">800</option>
+                                            <option value="600">600</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">FPS Maks</label>
+                                        <select id="pro-video-fps" class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option value="60">60</option>
+                                            <option value="144">144</option>
+                                            <option value="120">120</option>
+                                            <option value="90">90</option>
+                                            <option value="30">30</option>
+                                            <option value="15">15</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Bitrate Video</label>
+                                        <select id="pro-video-bitrate" class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option value="8M">8 Mbps</option>
+                                            <option value="32M">32 Mbps</option>
+                                            <option value="24M">24 Mbps</option>
+                                            <option value="16M">16 Mbps</option>
+                                            <option value="4M">4 Mbps</option>
+                                            <option value="2M">2 Mbps</option>
+                                            <option value="1M">1 Mbps</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Codec Video</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>h264 (Default)</option>
+                                            <option>h265</option>
+                                            <option>av1</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 lg:col-span-7 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="videocam">videocam</span>
+                                    <h3 class="font-bold text-sm font-label-md">Kamera &amp; Sizing</h3>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Sumber Video</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>Layar HP</option>
+                                            <option>Kamera HP</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Posisi Kamera</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>Bawaan (Default)</option>
+                                            <option>Kamera Depan</option>
+                                            <option>Kamera Belakang</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Rotasi Layar</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>Mengikuti HP</option>
+                                            <option>Kunci Orientasi Awal</option>
+                                            <option>0°</option>
+                                            <option>90° CCW</option>
+                                            <option>180°</option>
+                                            <option>90° CW</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Display ID</label>
+                                        <input class="w-full rounded px-4 py-2 text-sm" placeholder="ID Layar HP..." type="text"/>
+                                    </div>
+                                    <div class="space-y-2 col-span-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Crop Layar</label>
+                                        <input class="w-full rounded px-4 py-2 text-sm font-code" placeholder="Misal: 1080:1920:0:0" type="text"/>
+                                    </div>
+                                    <div class="space-y-2 col-span-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Judul Window Kustom</label>
+                                        <input class="w-full rounded px-4 py-2 text-sm" placeholder="Judul window scrcpy..." type="text"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: AUDIO -->
+                    <div id="tab-audio" class="tab-panel hidden grid grid-cols-12 gap-6">
+                        <div class="col-span-12 lg:col-span-6 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="settings_voice">settings_voice</span>
+                                    <h3 class="font-bold text-sm font-label-md">Codec &amp; Input</h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <label class="flex items-center justify-between cursor-pointer group p-2 rounded hover:bg-white/5 transition-all">
+                                        <span class="text-sm font-medium">Matikan Suara (No Audio)</span>
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                    </label>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Sumber Audio</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>Internal Audio (Default)</option>
+                                            <option>Mikrofon</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Codec Audio</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>OPUS (Default)</option>
+                                            <option>AAC</option>
+                                            <option>RAW</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 lg:col-span-6 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="slow_motion_video">slow_motion_video</span>
+                                    <h3 class="font-bold text-sm font-label-md">Buffer &amp; Bitrate</h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Buffer Audio (ms)</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>200</option>
+                                            <option>100</option>
+                                            <option>50</option>
+                                            <option>300</option>
+                                            <option>500</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Bitrate Audio</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>128 Kbps</option>
+                                            <option>192 Kbps</option>
+                                            <option>256 Kbps</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: KONTROL -->
+                    <div id="tab-kontrol" class="tab-panel hidden grid grid-cols-12 gap-6">
+                        <div class="col-span-12 lg:col-span-6 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="mouse">mouse</span>
+                                    <h3 class="font-bold text-sm font-label-md">Input &amp; Clipboard</h3>
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <span class="text-sm font-medium">Sinkronisasi Clipboard</span>
+                                        <input checked="" class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <span class="text-sm font-medium">Forward Tombol Volume PC</span>
+                                        <input checked="" class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <span class="text-sm font-medium">Mode Keyboard UHID</span>
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                    </label>
+                                    <label class="flex items-center justify-between cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <span class="text-sm font-medium">Mode OTG (Kabel USB)</span>
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 lg:col-span-6 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="settings_system_daydream">settings_system_daydream</span>
+                                    <h3 class="font-bold text-sm font-label-md">Perilaku Window</h3>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                        <span class="text-xs">HP Tetap Menyala</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                        <span class="text-xs">Matikan Layar HP</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                        <span class="text-xs">Selalu Di Atas</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                        <span class="text-xs">Mulai Fullscreen</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                        <span class="text-xs">Tampilkan Sentuhan</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                        <span class="text-xs">Tanpa Border</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                        <span class="text-xs">Hanya Lihat</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                        <span class="text-xs">Matikan Layar Saat Exit</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 obsidian-noir-glass p-6 rounded-lg space-y-2">
+                            <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Argumen Tambahan (Extra CLI Flags)</label>
+                            <input class="w-full rounded px-4 py-3 text-sm font-code" placeholder="Contoh: --render-driver=opengl --window-x=100" type="text"/>
+                        </div>
+                    </div>
+
+                    <!-- TAB: MULTITASK -->
+                    <div id="tab-multitask" class="tab-panel hidden grid grid-cols-12 gap-6">
+                        <div class="col-span-12 lg:col-span-6 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="layers">layers</span>
+                                    <h3 class="font-bold text-sm font-label-md">Display Virtual</h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <label class="flex items-center justify-between cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <span class="text-sm font-medium">Aktifkan Layar Virtual Baru</span>
+                                        <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                    </label>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Resolusi Layar Virtual</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>Bawaan</option>
+                                            <option>1920x1080</option>
+                                            <option>1280x720</option>
+                                            <option>1080x1920</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Mode Mouse Virtual</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>UHID (Virtual HID)</option>
+                                            <option>Disabled (Mouse Tetap di PC)</option>
+                                            <option>SDK (Default)</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Mode Keyboard Virtual</label>
+                                        <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                            <option>UHID (Virtual HID)</option>
+                                            <option>SDK (Default)</option>
+                                            <option>Disabled</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 lg:col-span-6 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="open_in_new">open_in_new</span>
+                                    <h3 class="font-bold text-sm font-label-md">Mulai Aplikasi</h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="space-y-2">
+                                        <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Nama Paket Aplikasi (Package Name)</label>
+                                        <div class="flex gap-2">
+                                            <input id="pro-start-app" class="flex-1 rounded px-4 py-2 text-sm" placeholder="Contoh: com.android.chrome" type="text" list="apps-list-pro"/>
+                                            <button id="btn-pro-fetch-apps-multitask" class="bg-surface-container border border-outline-variant text-[11px] font-bold px-3 rounded hover:bg-surface-variant transition-all">📋 DAFTAR APP</button>
+                                        </div>
+                                        <datalist id="apps-list-pro">
+                                            <option value="com.android.chrome"></option>
+                                            <option value="com.whatsapp"></option>
+                                            <option value="com.instagram.android"></option>
+                                            <option value="com.spotify.music"></option>
+                                        </datalist>
+                                        <div id="pro-app-warning" class="text-[10.5px] text-amber-400 flex items-center gap-1 mt-1">
+                                            <span class="material-symbols-outlined text-[14px]" data-icon="warning">warning</span>
+                                            <span>Wajib diisi untuk Layar Virtual.</span>
+                                        </div>
+                                    </div>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                        <input id="pro-new-task" checked="" class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                        <span class="text-sm font-medium">Buka di Task Baru (+)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: REKAMAN -->
+                    <div id="tab-rekaman" class="tab-panel hidden grid grid-cols-12 gap-6">
+                        <div class="col-span-12 obsidian-noir-glass p-6 rounded-lg space-y-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="videocam">videocam</span>
+                                    <h3 class="font-bold text-sm font-label-md">Perekam Video Layar</h3>
+                            </div>
+                            <div class="space-y-4">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-white/5 transition-all">
+                                    <input class="rounded bg-black border-outline-variant text-on-surface focus:ring-on-surface" type="checkbox"/>
+                                    <span class="text-sm font-medium">Simpan Sesi Streaming ke File</span>
+                                </label>
+                                <div class="space-y-2">
+                                    <label class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold font-label-sm block">Lokasi Penyimpanan &amp; Nama Berkas</label>
+                                    <input class="w-full rounded px-4 py-3 text-sm font-code" placeholder="Misal: C:/Users/aziz/Videos/rekaman.mp4" type="text"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: PROFIL -->
+                    <div id="tab-profil" class="tab-panel hidden grid grid-cols-12 gap-6">
+                        <div class="col-span-12 lg:col-span-6 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="folder_special">folder_special</span>
+                                    <h3 class="font-bold text-sm font-label-md">Profil Tersimpan</h3>
+                                </div>
+                                <div class="space-y-3">
+                                    <select class="w-full rounded px-4 py-2 text-sm focus:outline-none">
+                                        <option>Bawaan</option>
+                                        <option>Mode Gaming (2K @ 120 FPS)</option>
+                                        <option>Mode Ringan (800p @ 30 FPS)</option>
+                                    </select>
+                                    <div class="flex gap-2">
+                                        <button class="flex-1 py-2 bg-primary text-on-primary rounded text-[11px] font-bold">MUAT</button>
+                                        <button class="flex-1 py-2 bg-surface-container border border-outline-variant text-error rounded text-[11px] font-bold hover:bg-error/10 transition-all border-error/20">HAPUS</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 lg:col-span-6 space-y-6">
+                            <div class="obsidian-noir-glass p-6 rounded-lg space-y-4">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary" data-icon="create_new_folder">create_new_folder</span>
+                                    <h3 class="font-bold text-sm font-label-md">Simpan Profil Baru</h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="space-y-2">
+                                        <input class="w-full rounded px-4 py-2 text-sm" placeholder="Nama profil baru..." type="text"/>
+                                    </div>
+                                    <button class="w-full py-3 bg-primary text-on-primary rounded text-xs font-bold hover:brightness-90 transition-all uppercase tracking-wider">
+                                        💾 Simpan Konfigurasi
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Command Preview Card -->
+                <div class="obsidian-noir-glass p-6 rounded-lg mt-6 space-y-3">
+                    <div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-[20px]" data-icon="visibility">visibility</span>
+                            <span class="font-bold text-sm font-label-md">Command Preview</span>
+                        </div>
+                        <button id="btn-copy-command" class="px-3 py-1.5 bg-surface-container border border-outline-variant rounded hover:bg-surface-variant text-[10px] font-bold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]" data-icon="content_copy">content_copy</span> COPY
+                        </button>
+                    </div>
+                    <div id="pro-command-preview" class="bg-surface-container-lowest/80 p-4 rounded font-code text-[11px] text-on-surface border border-outline-variant/30 select-all whitespace-normal break-all">
+                        scrcpy --max-fps=60 --video-bit-rate=8M --video-codec=h264 --print-fps
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- BottomNavBar / Terminal -->
+    <footer class="h-[240px] obsidian-noir-glass border-t border-outline-variant z-50 flex flex-col relative">
+        <!-- Xiaomi Error Alert Mockup Card (Only shown if error occurs) -->
+        <div id="error-alert" class="hidden absolute bottom-16 left-6 right-6 p-4 rounded bg-red-950/40 border border-error/25 text-sm z-50 animate-fadeUp">
+            <div class="flex items-center gap-2 mb-1 text-error font-bold">
+                <span class="material-symbols-outlined text-error text-[18px]" data-icon="warning">warning</span>
+                <span>Terjadi Kesalahan Scrcpy (Xiaomi/Redmi/Poco Detected)</span>
+            </div>
+            <div class="text-[11px] text-on-surface-variant leading-relaxed">
+                ERROR: [mac] failed to inject events. Please make sure that USB debugging (Security Settings) is enabled on your phone.
+                <div class="mt-2 text-primary font-medium">💡 Cara Mengatasi:</div>
+                <ol class="list-decimal list-inside text-on-surface mt-1 pl-1 space-y-0.5">
+                    <li>Buka <strong>Opsi Pengembang</strong> di HP Anda.</li>
+                    <li>Aktifkan <strong>"USB debugging (Setelan Keamanan)"</strong> / <strong>"USB debugging (Security Settings)"</strong>.</li>
+                    <li>Mulai ulang (reboot) HP Anda, lalu coba sambungkan kembali.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Terminal Header -->
+        <div class="h-10 bg-surface-container-lowest flex items-center justify-between px-6 border-b border-outline-variant">
+            <div class="flex items-center gap-4">
+                <span class="text-[10px] font-bold text-on-surface-variant tracking-widest font-label-sm">TERMINAL OUTPUT</span>
+                <div class="flex gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-sm bg-surface-variant"></span>
+                    <span class="w-2.5 h-2.5 rounded-sm bg-surface-variant"></span>
+                    <span class="w-2.5 h-2.5 rounded-sm bg-surface-variant"></span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="material-symbols-outlined text-on-surface-variant hover:text-on-surface cursor-pointer text-[18px]" data-icon="content_copy">content_copy</span>
+                <span class="material-symbols-outlined text-on-surface-variant hover:text-on-surface cursor-pointer text-[18px]" data-icon="delete" id="trigger-error-mock">delete</span>
+            </div>
+        </div>
+        <!-- Terminal Logs -->
+        <div class="flex-1 bg-surface-container-lowest/90 p-4 font-code text-[12px] terminal-scroll overflow-y-auto">
+            <div class="flex gap-4 text-on-surface-variant">
+                <span class="text-on-surface font-bold">[INFO]</span>
+                <span>Scrcpy version 2.4.0 (Obsidian Noir v1.2)</span>
+            </div>
+            <div class="flex gap-4 text-on-surface-variant">
+                <span class="text-on-surface font-bold">[INFO]</span>
+                <span>Connecting to device via TCP/IP 192.168.1.104...</span>
+            </div>
+            <div class="flex gap-4 text-on-surface-variant mt-1">
+                <span class="text-on-surface-variant/60">[CMD]</span>
+                <span class="text-on-surface">scrcpy --max-fps 60 --bit-rate 8M --power-off-on-close --window-title "Galaxy S23 Ultra"</span>
+            </div>
+            <div class="mt-4 text-primary animate-pulse">_</div>
+        </div>
+        <!-- Action Bar -->
+        <div class="h-16 border-t border-outline-variant bg-surface flex items-center justify-between px-6">
+            <div class="flex items-center gap-6">
+                <button class="flex items-center gap-2 px-6 py-2 bg-surface-container border border-outline-variant rounded text-error text-xs font-bold hover:bg-error/10 transition-all" id="btn-stop">
+                    <span class="material-symbols-outlined text-[18px] font-fill" data-icon="stop" style="font-variation-settings: 'FILL' 1;">stop</span> STOP
+                </button>
+                <div class="h-6 w-px bg-outline-variant"></div>
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] text-on-surface-variant font-label-sm">PID: <span class="font-code text-on-surface" id="pid-stats">--</span></span>
+                    <span class="text-[10px] text-on-surface-variant font-label-sm">UPTIME: <span class="font-code text-on-surface" id="uptime-stats">00:00</span></span>
+                </div>
+            </div>
+            <button class="flex items-center gap-3 px-10 py-3 bg-primary text-on-primary rounded text-sm font-bold hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-tighter" id="btn-play">
+                <span class="material-symbols-outlined text-[20px]" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span> JALANKAN
+            </button>
+        </div>
+    </footer>
+</div>
+<script>
+        // Mode Switching Logic
+        const toggleSimple = document.getElementById('toggle-simple');
+        const togglePro = document.getElementById('toggle-pro');
+        const proSidebar = document.getElementById('pro-sidebar');
+        const simpleContent = document.getElementById('simple-content');
+        const proContent = document.getElementById('pro-content');
+        const headerStatus = document.getElementById('header-status');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+
+        // Status Update Helper
+        function setStatus(msg, type = 'success') {
+            statusText.textContent = msg;
+            headerStatus.classList.remove('hidden');
+            if (type === 'success') {
+                statusDot.className = 'w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse';
+                statusText.className = 'font-code text-emerald-400';
+            } else if (type === 'warning') {
+                statusDot.className = 'w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse';
+                statusText.className = 'font-code text-amber-400';
+            } else {
+                statusDot.className = 'w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse';
+                statusText.className = 'font-code text-error';
+            }
+        }
+
+        toggleSimple.addEventListener('click', () => {
+            toggleSimple.classList.add('bg-primary', 'text-on-primary');
+            toggleSimple.classList.remove('text-on-surface-variant');
+            togglePro.classList.remove('bg-primary', 'text-on-primary');
+            togglePro.classList.add('text-on-surface-variant');
+            
+            proSidebar.classList.add('hidden');
+            simpleContent.classList.remove('hidden');
+            proContent.classList.add('hidden');
+            setStatus('Siap (Mode Pemula).');
+        });
+
+        togglePro.addEventListener('click', () => {
+            togglePro.classList.add('bg-primary', 'text-on-primary');
+            togglePro.classList.remove('text-on-surface-variant');
+            toggleSimple.classList.remove('bg-primary', 'text-on-primary');
+            toggleSimple.classList.add('text-on-surface-variant');
+            
+            proSidebar.classList.remove('hidden');
+            proSidebar.classList.add('flex');
+            simpleContent.classList.add('hidden');
+            proContent.classList.remove('hidden');
+            setStatus('Siap (Mode Pro).');
+        });
+
+        // Nav Item Activation & Tab Switching
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active classes from other nav items
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('active', 'text-primary', 'bg-surface-variant', 'font-bold');
+                    i.classList.add('text-on-surface-variant');
+                });
+                // Add active classes to clicked nav item
+                item.classList.add('active', 'text-primary', 'bg-surface-variant', 'font-bold');
+                item.classList.remove('text-on-surface-variant');
+
+                // Get target tab id from data-tab attribute
+                const tabId = item.getAttribute('data-tab');
+                
+                // Hide all tab panels
+                document.querySelectorAll('.tab-panel').forEach(panel => {
+                    panel.classList.add('hidden');
+                });
+                
+                // Show the active tab panel
+                const activePanel = document.getElementById('tab-' + tabId);
+                if (activePanel) {
+                    activePanel.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Simple Mode: Toggle Virtual Display app container
+        const toggleSimpleVirtual = document.getElementById('toggle-simple-virtual');
+        const simpleVirtualOptions = document.getElementById('simple-virtual-options');
+        const simpleStartApp = document.getElementById('simple-start-app');
+        const simpleAppWarning = document.getElementById('simple-app-warning');
+
+        toggleSimpleVirtual.addEventListener('change', () => {
+            if (toggleSimpleVirtual.checked) {
+                simpleVirtualOptions.classList.remove('hidden');
+            } else {
+                simpleVirtualOptions.classList.add('hidden');
+            }
+        });
+
+        simpleStartApp.addEventListener('input', () => {
+            if (simpleStartApp.value.trim() === '') {
+                simpleAppWarning.classList.remove('hidden');
+            } else {
+                simpleAppWarning.classList.add('hidden');
+            }
+        });
+
+        // Pro Mode: Virtual Display App warning
+        const proStartApp = document.getElementById('pro-start-app');
+        const proAppWarning = document.getElementById('pro-app-warning');
+        proStartApp.addEventListener('input', () => {
+            if (proStartApp.value.trim() === '') {
+                proAppWarning.classList.remove('hidden');
+            } else {
+                proAppWarning.classList.add('hidden');
+            }
+        });
+
+        // Simple Device Select debug hint
+        const simpleDeviceSelect = document.getElementById('simple-device-select');
+        const simpleDebuggingHint = document.getElementById('simple-debugging-hint');
+        simpleDeviceSelect.addEventListener('change', () => {
+            if (simpleDeviceSelect.value === 'Tidak ada perangkat') {
+                simpleDebuggingHint.classList.remove('hidden');
+                setStatus('Tidak ada perangkat terhubung.', 'warning');
+            } else {
+                simpleDebuggingHint.classList.add('hidden');
+                setStatus('Perangkat dipilih: ' + simpleDeviceSelect.value);
+            }
+        });
+
+        // Interactive simulation for Buttons
+        const btnSimpleRefresh = document.getElementById('btn-simple-refresh');
+        const btnProRefresh = document.getElementById('btn-pro-refresh');
+        const btnProScanWifi = document.getElementById('btn-pro-scan-wifi');
+
+        const handleRefresh = () => {
+            setStatus('Mendeteksi perangkat...', 'warning');
+            setTimeout(() => {
+                setStatus('Ditemukan 2 perangkat terhubung.', 'success');
+            }, 1200);
+        };
+
+        if (btnSimpleRefresh) btnSimpleRefresh.addEventListener('click', handleRefresh);
+        if (btnProRefresh) btnProRefresh.addEventListener('click', handleRefresh);
+        if (btnProScanWifi) btnProScanWifi.addEventListener('click', () => {
+            setStatus('Sedang menscan jaringan (Subnet)...', 'warning');
+            setTimeout(() => {
+                setStatus('Scan selesai. Ditemukan 2 perangkat WiFi.', 'success');
+            }, 1500);
+        });
+
+        // Connect Buttons simulation
+        const btnSimpleConnect = document.getElementById('btn-simple-connect');
+        const simpleWifiIp = document.getElementById('simple-wifi-ip');
+        const btnProConnect = document.getElementById('btn-pro-connect');
+        const proWifiIp = document.getElementById('pro-wifi-ip');
+
+        const handleConnect = (ipInput) => {
+            const ip = ipInput.value.trim();
+            if (!ip) {
+                setStatus('Masukkan alamat IP terlebih dahulu.', 'error');
+                return;
+            }
+            setStatus(`Menyambung ke ${ip}...`, 'warning');
+            setTimeout(() => {
+                setStatus(`Berhasil menyambung ke ${ip}.`, 'success');
+            }, 1500);
+        };
+
+        if (btnSimpleConnect) btnSimpleConnect.addEventListener('click', () => handleConnect(simpleWifiIp));
+        if (btnProConnect) btnProConnect.addEventListener('click', () => handleConnect(proWifiIp));
+
+        // Wifi ADB Converter
+        const btnProEnableWifi = document.getElementById('btn-pro-enable-wifi');
+        if (btnProEnableWifi) {
+            btnProEnableWifi.addEventListener('click', () => {
+                setStatus('Mengaktifkan ADB WiFi via USB...', 'warning');
+                setTimeout(() => {
+                    setStatus('ADB WiFi aktif: 192.168.1.104:5555', 'success');
+                }, 1500);
+            });
+        }
+
+        // Pro Mode: Toggle Debug Mode simulation
+        const btnProToggleDebug = document.getElementById('btn-pro-toggle-debug');
+        const wifiDebugStatus = document.getElementById('wifi-debug-status');
+        if (btnProToggleDebug) {
+            btnProToggleDebug.addEventListener('click', () => {
+                if (wifiDebugStatus.textContent === 'ON') {
+                    wifiDebugStatus.textContent = 'OFF';
+                    wifiDebugStatus.className = 'px-2 py-0.5 rounded bg-red-950 text-red-400 font-bold border border-red-800 ml-1';
+                    setStatus('Wireless Debugging dinonaktifkan.');
+                } else {
+                    wifiDebugStatus.textContent = 'ON';
+                    wifiDebugStatus.className = 'px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-800 ml-1';
+                    setStatus('Wireless Debugging diaktifkan.');
+                }
+            });
+        }
+
+        // Copy command button
+        const btnCopyCommand = document.getElementById('btn-copy-command');
+        const proCommandPreview = document.getElementById('pro-command-preview');
+        if (btnCopyCommand) {
+            btnCopyCommand.addEventListener('click', () => {
+                navigator.clipboard.writeText(proCommandPreview.textContent.trim());
+                const prevText = btnCopyCommand.innerHTML;
+                btnCopyCommand.innerHTML = '<span class="material-symbols-outlined text-[14px]">done</span> COPIED';
+                setStatus('Perintah disalin ke clipboard!');
+                setTimeout(() => {
+                    btnCopyCommand.innerHTML = prevText;
+                }, 2000);
+            });
+        }
+
+        // Fetch apps lists simulation
+        const btnSimpleFetchApps = document.getElementById('btn-simple-fetch-apps');
+        const btnProFetchApps = document.getElementById('btn-pro-fetch-apps');
+        const btnProFetchAppsMultitask = document.getElementById('btn-pro-fetch-apps-multitask');
+
+        const handleFetchApps = () => {
+            setStatus('Mengambil daftar aplikasi dari HP...', 'warning');
+            setTimeout(() => {
+                setStatus('Daftar aplikasi berhasil dimuat.', 'success');
+            }, 1000);
+        };
+
+        if (btnSimpleFetchApps) btnSimpleFetchApps.addEventListener('click', handleFetchApps);
+        if (btnProFetchApps) btnProFetchApps.addEventListener('click', handleFetchApps);
+        if (btnProFetchAppsMultitask) btnProFetchAppsMultitask.addEventListener('click', handleFetchApps);
+
+        // Preset selection visual mock
+        document.querySelectorAll('.obsidian-noir-glass.group').forEach(group => {
+            group.addEventListener('click', () => {
+                document.querySelectorAll('.obsidian-noir-glass.group').forEach(g => g.classList.remove('active-preset'));
+                group.classList.add('active-preset');
+            });
+        });
+
+        // Mini Interactive Mockup logic for Play/Stop and Error simulation
+        const btnPlay = document.getElementById('btn-play');
+        const btnStop = document.getElementById('btn-stop');
+        const pidStats = document.getElementById('pid-stats');
+        const uptimeStats = document.getElementById('uptime-stats');
+        const errorAlert = document.getElementById('error-alert');
+        const triggerErrorMock = document.getElementById('trigger-error-mock'); // Using delete icon as error mock toggle
+
+        let timer = null;
+        let elapsed = 0;
+
+        btnPlay.addEventListener('click', () => {
+            btnPlay.disabled = true;
+            btnPlay.classList.add('opacity-40');
+            pidStats.textContent = Math.floor(10000 + Math.random() * 9000);
+            errorAlert.classList.add('hidden');
+            setStatus('Scrcpy sedang berjalan...', 'success');
+
+            // Start simple timer simulation
+            elapsed = 0;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                elapsed++;
+                const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                const secs = String(elapsed % 60).padStart(2, '0');
+                uptimeStats.textContent = `${mins}:${secs}`;
+            }, 1000);
+        });
+
+        btnStop.addEventListener('click', () => {
+            btnPlay.disabled = false;
+            btnPlay.classList.remove('opacity-40');
+            pidStats.textContent = '--';
+            uptimeStats.textContent = '00:00';
+            clearInterval(timer);
+            setStatus('Sesi Scrcpy selesai.');
+        });
+
+        // Trigger simulation of Xiaomi permission error alert card
+        triggerErrorMock.addEventListener('click', (e) => {
+            e.stopPropagation();
+            errorAlert.classList.toggle('hidden');
+            if (!errorAlert.classList.contains('hidden')) {
+                setStatus('Scrcpy error: kegagalan injeksi event (Xiaomi).', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
