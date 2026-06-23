@@ -1,5 +1,16 @@
+# Python cache and settings
 __pycache__/
 *.pyc
 scrcpy_profiles.json
+
+# Temporary files & logs
+stdout.txt
+stderr.txt
 rekaman.mp4
 rekaman.mkv
+
+# Node/Tauri dependency & build folders
+node_modules/
+scrcpy-launcher-v5/node_modules/
+scrcpy-launcher-v5/dist/
+scrcpy-launcher-v5/src-tauri/target/
